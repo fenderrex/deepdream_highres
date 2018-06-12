@@ -28,17 +28,17 @@ imagenet_mean = 117.0
 t_preprocessed = tf.expand_dims(t_input-imagenet_mean, 0)
 tf.import_graph_def(graph_def, {'input':t_preprocessed})
 
-print "--- Available Layers: ---"
+print("--- Available Layers: ---")
 layers = []
 for name in (op.name for op in graph.get_operations()):
   layer_shape = graph.get_tensor_by_name(name+':0').get_shape()
   if not layer_shape.ndims: continue
   layers.append((name, int(layer_shape[-1])))
   print name, "Features/Channels: ", int(layer_shape[-1])
-print 'Number of layers', len(layers)
-print 'Total number of feature channels:', sum((layer[1] for layer in layers))
-print 'Chosen layer: '
-print graph.get_operation_by_name(FLAGS.layer);
+print ('Number of layers', len(layers))
+print ('Total number of feature channels:', sum((layer[1] for layer in layers)))
+print ('Chosen layer: ')
+print (graph.get_operation_by_name(FLAGS.layer))
 
 def T(layer):
     '''Helper for getting layer output tensor'''
@@ -95,7 +95,7 @@ def render_deepdream(t_obj, img,
 
     # generate details octave by octave
     for octave in xrange(octave_n):
-        print " Octave: ", octave, "Res: ", img.shape
+        print(" Octave: ", octave, "Res: ", img.shape)
         if octave>0:
             hi = octaves[-octave]
             img = resize(img, hi.shape[:2])+hi
@@ -123,7 +123,7 @@ def main(_):
       img = img[img.shape[0]//2-start_shape[0]//2 : img.shape[0]//2-start_shape[0]//2 + start_shape[0],
                 img.shape[1]//2-start_shape[1]//2 : img.shape[1]//2-start_shape[1]//2 + start_shape[1],:]
 
-    print "Cycle", i_frame, " Res:", img.shape
+    print("Cycle", i_frame, " Res:", img.shape)
     t_obj = tf.square(T(FLAGS.layer))
     if FLAGS.feature >= 0:
       t_obj = T(FLAGS.layer)[:,:,:,FLAGS.feature]
@@ -131,7 +131,7 @@ def main(_):
         iter_n = FLAGS.iterations,
         octave_n = FLAGS.octaves,
         octave_scale = FLAGS.octave_scale)
-    print "Saving ", i_frame
+    print ("Saving ", i_frame)
     img = np.uint8(np.clip(img, 0, 255))
     PIL.Image.fromarray(img).save("%s_%05d.jpg"%(FLAGS.output, i_frame), "jpeg", quality=98)
 
